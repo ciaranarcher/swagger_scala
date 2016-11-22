@@ -1,0 +1,83 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.1",
+        "title": "PX page_view event (POC)"
+    },
+    "consumes": [
+        "application/json"
+    ],
+    "paths": {
+        "/page_view": {
+            "post": {
+                "description": "Registers a page view.\n",
+                "parameters": [
+                    {
+                        "name": "pet",
+                        "in": "body",
+                        "description": "Pet to add to the store",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/pageView"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "context": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "referrer": {
+                    "type": "string"
+                }
+            }
+        },
+        "pageView": {
+            "type": "object",
+            "required": [
+                "account_id",
+                "event",
+                "sent_at",
+                "version"
+            ],
+            "properties": {
+                "account_id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "event": {
+                    "type": "string"
+                },
+                "sent_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "channel": {
+                    "type": "string"
+                },
+                "context": {
+                    "$ref": "#/definitions/context"
+                }
+            }
+        }
+    }
+}
