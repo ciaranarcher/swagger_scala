@@ -13,12 +13,12 @@
                 "description": "Registers a page view.\n",
                 "parameters": [
                     {
-                        "name": "pet",
+                        "name": "page_view",
                         "in": "body",
-                        "description": "Pet to add to the store",
+                        "description": "Records a page view.",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/pageView"
+                            "$ref": "#/definitions/page_view"
                         }
                     }
                 ],
@@ -45,7 +45,7 @@
                 }
             }
         },
-        "pageView": {
+        "page_view": {
             "type": "object",
             "required": [
                 "account_id",
