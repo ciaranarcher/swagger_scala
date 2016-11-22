@@ -2,6 +2,7 @@ package org.example
 
 import java.io.File
 
+import io.swagger.models.Swagger
 import io.swagger.parser.SwaggerParser
 import io.swagger.util.Json
 
@@ -15,9 +16,11 @@ object SchemaValidator extends App {
       new SwaggerParser().read(schemaPath)
     }
 
+    printSchema(schema = swaggerDefinition)
+  }
+
+  def printSchema(schema: Swagger) = {
     println("Pretty schema:")
-    println(Json.pretty {
-      swaggerDefinition
-    })
+    println(Json.pretty(schema))
   }
 }
