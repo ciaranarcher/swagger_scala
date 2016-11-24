@@ -2,43 +2,48 @@ package org.example
 
 import java.io.File
 
-import io.swagger.models.Swagger
-import io.swagger.parser.SwaggerParser
-import io.swagger.util.Json
-import org.json4s.jackson.JsonMethods.{parse, compact, render}
+import com.eclipsesource.schema.SchemaType
+import play.api.libs.json._
 
 
 object SchemaValidator extends App {
   override def main(args: Array[String]): Unit = {
     val schemaPath = {
-      new File(".", "page_view.json").getCanonicalPath
+      /*
+       * Change to swagger_with_nesting.json if you want to see a failure due to a nested reference (context)
+       * being missing from the schema.
+       */
+      new File(".", "swagger.json").getCanonicalPath
     }
-
-    val swaggerDefinition = {
-      new SwaggerParser().read(schemaPath)
-    }
-
-    println("Swagger definition:")
-    printSchema(schema = swaggerDefinition) // Print the Swagger, nicely.
 
     println("Page view schema definition:")
-    println(extractJsonSchema(filePath = schemaPath, schemaName = "page_view")) // Print the JSON schema we are after
+    val schemaJson = extractJsonSchema(filePath = schemaPath, schemaName = "page_view")
+
+    val schema = Json.fromJson[SchemaType](schemaJson).get
+    val validator = new com.eclipsesource.schema.SchemaValidator
+
+    val documentPath = {
+      new File(".", "/samples/page_view.json").getCanonicalPath
+    }
+
+    val document = scala.io.Source.fromFile(documentPath)
+    val documentData = try document.mkString finally document.close()
+
+    val tmpJsonValue: JsValue = Json.parse(documentData)
+    val result = validator.validate(schema, tmpJsonValue)
+
+    result match {
+      case _: JsError => println(s"\n\nDocument is invalid: ${result}\n")
+      case default => println("\n\nDocument is valid.\n")
+    }
   }
 
   def extractJsonSchema(filePath: String, schemaName: String) = {
-
     val source = scala.io.Source.fromFile(filePath)
     val lines = try source.mkString finally source.close() // Slurp the whole file
-    val json = parse(lines)
+    val json: JsValue = Json.parse(lines)
 
     // Read a particular schema in the Swagger definition
-    val schema = json \\ "definitions" \\ schemaName
-
-    compact(render(schema))
-  }
-
-  def printSchema(schema: Swagger) = {
-    println("Pretty schema:")
-    println(Json.pretty(schema))
+     (json \ "definitions" \ schemaName).get
   }
 }

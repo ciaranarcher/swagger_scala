@@ -1,0 +1,66 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.1",
+        "title": "PX page_view event (POC)"
+    },
+    "consumes": [
+        "application/json"
+    ],
+    "paths": {
+        "/page_view": {
+            "post": {
+                "description": "Registers a page view.\n",
+                "parameters": [
+                    {
+                        "name": "page_view",
+                        "in": "body",
+                        "description": "Records a page view.",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/page_view"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "page_view": {
+            "type": "object",
+            "required": [
+                "account_id",
+                "event",
+                "sent_at",
+                "version"
+            ],
+            "properties": {
+                "account_id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "event": {
+                    "type": "string"
+                },
+                "sent_at": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "channel": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
